@@ -2,7 +2,7 @@ JQuery-ui-custom-widgets
 ========================
 
 *	add-ons for JQuery-UI
-*	Coming soon: JSFIDDLE example
+*	Coming soon: JSFIDDLE examples
 
 hmenu.js
 --------
@@ -27,12 +27,12 @@ hmenu.js
 
 
 ######JavaScript: 
-`$('#mymenu').hmenu();`
+	$('#mymenu').hmenu();
 
 ####custom options: 
 
 ######HTML:
-`<div id = "mymenu" ></div>`
+	<div id = "mymenu" ></div>
 
 ######JavaScript: 
 	$('#mymenu').hmenu({
@@ -95,37 +95,40 @@ hmenu.js
 	                    
 	    });
 
-**Note that the "data" option allows you to give a JSON to populate the menu instead of writing html. If the data is not setted, the widget will look for an html body.
-The onclick can either take a string URL or a callback function.
+*Note that the "data" option allows you to give a JSON to populate the menu instead of writing html. If the data is not setted, the widget will look for an html body.
+The onclick can either take a string URL or a callback function.*
 
-/******************************spoiler.js*****************************************/
-includes: jquery, jquery-ui, spoiler.js, spoiler.css
+spoiler.js
+----------
+*	includes: jquery, jquery-ui, spoiler.js, spoiler.css
 
-apply default options: 
-<div id = "myspoiler" >
-<span></span><input type = "button" value = "" />
-<div class = "ui-spoiler-hidden"></div>
-</div>
+####apply default options: 
+######HTML:
+	<div id = "myspoiler" >
+	<span></span><input type = "button" value = "" />
+	<div class = "ui-spoiler-hidden"></div>
+	</div>
 
-js: 
+######JavaScript: 
 $('#myspoiler').spoiler();
 
-custom options: 
-<div id = "myspoiler" ></div>
+####custom options: 
+######HTML:
+	<div id = "myspoiler" ></div>
 
-js:
-$('#myspoiler').spoiler({
-
-	width: 200,
-	padding: 10,
-	fontSize : 0.8,
-	color: "#C0FFFF",
-	contentTopMargin: 40,
-	headerWidth : 150,
-	buttonSize: 0.6,
-	toggleSpeed: 'slow',
-	toggleEasing: 'swing',
-	toggleCallback : null,
-	data: {header : '<b>this is header</b>', content : 'this is content'}
-
-});
+######JavaScript:
+	$('#myspoiler').spoiler({
+	
+		width: 200,
+		padding: 10,
+		fontSize : 0.8,
+		color: "#C0FFFF",
+		contentTopMargin: 40,
+		headerWidth : 150,
+		buttonSize: 0.6,
+		toggleSpeed: 'slow',
+		toggleEasing: 'swing',
+		toggleCallback : null,
+		data: {header : '<b>this is header</b>', content : 'this is content'}
+	
+	});
