@@ -1,10 +1,10 @@
-    
-/********************************** Global Variables *******************************************************/
-    var OnClickCallbacks = new Object();
-    var ItemIds = [];
-    var ItemCounter = 0;
-/***********************************************************************************************************/
-
+/*
+ *  Document   : hmenu.js
+ *  Created on : 28-Sept-2013
+ *  Author     : Shao Hang He
+ *  Description: core Javascript File for hmenu plugin
+ */
+ 
     $.widget( "custom.hmenu", {
       // default options
       options: {
@@ -27,7 +27,9 @@
       },
 
       global_vars: {
-        button_clicks : 0
+        OnClickCallbacks : new Object(),
+        ItemIds : [],
+        ItemCounter : 0
       },
       // the constructor
       _create: function() {
@@ -36,12 +38,12 @@
 
         if(this.options.data !== null)
         {
-             this.element.html(createList(this.options.data));
+             this.element.html(this.createList(this.options.data));
         }
 
-        for(var i = 0; i < ItemIds.length; i++)
+        for(var i = 0; i < this.global_vars.ItemIds.length; i++)
         {
-            $('#' + ItemIds[i]).bind( 'click', OnClickCallbacks[ItemIds[i]]);
+            $('#' + this.global_vars.ItemIds[i]).bind( 'click', this.global_vars.OnClickCallbacks[this.global_vars.ItemIds[i]]);
         }
 
         this.element.addClass( "ui-hmenu" ).disableSelection();
@@ -94,9 +96,9 @@
         this.element.attr('style', '');
         this.element.removeClass( "ui-hmenu" ).enableSelection();
 
-        for(var i = 0; i < ItemIds.length; i++)
+        for(var i = 0; i < this.global_vars.ItemIds.length; i++)
         {
-            $('#' + ItemIds[i]).unbind( 'click' );
+            $('#' + this.global_vars.ItemIds[i]).unbind( 'click' );
         }
 
       },
@@ -113,76 +115,76 @@
       _setOption: function( key, value ) {
         return;
         this._super( key, value );
-      }
+      },
+
+      createList: function(itemsObject)
+      {
+           var data = "<ul>";
+  
+           for(var i in itemsObject)
+           {
+                data += this.createItem(itemsObject[i]);
+           }
+
+           data += "</ul>";
+       
+           return data;
+      },
+
+      createItem: function(item)
+      {
+            var hasSub  = "";
+            var active = "";
+            var subContent = "";
+            var itemId = 'MeneuItem_' + makeId(10) + this.global_vars.ItemCounter++;
+            var data = '<li>' + '<a id = "'+ itemId +'">' + item['label'] + '</a>';
+
+            if(item['subItems'] !== null && !item['active'])
+            {
+                data = '<li class = "ui-has-sub">' + '<a id = "'+  itemId +'">' + item['label'] + '</a>';       
+            }
+            else if(item['active'] && item['subItems'] === null)
+            {
+                data = '<li class = "ui-active">' + '<a id = "'+ itemId +'">' + item['label'] + '</a>';   
+            }
+            else if( item['active'] && item['subItems'] !== null)
+            {
+                data = '<li class = "ui-active ui-has-sub">' + '<a id = "'+ itemId +'">' + item['label'] + '</a>';     
+            }
+
+            if( $.isFunction(item['onclick']) )
+            {
+                this.global_vars.OnClickCallbacks[itemId] = item['onclick'];
+            }
+            else if(typeof item['onclick'] === "string")
+            {
+                this.global_vars.OnClickCallbacks[itemId] = function (){ window.location.href = item['onclick'];};
+            }
+            else
+            {
+                this.global_vars.OnClickCallbacks[itemId] = function (){ return false;};
+            }
+
+            this.global_vars.ItemIds.push(itemId);
+
+            if(item['subItems'] !== null)
+            {
+                data += this.createList(item['subItems']);
+            }
+
+            data += "</li>";
+
+            return data;
+      }      
+
     });
 
-    function createList(itemsObject)
-    {
-        var data = "<ul>";
-  
-        for(var i in itemsObject)
-        {
-             data += createItem(itemsObject[i]);console.log(itemsObject[i]);
-        }
-
-        data += "</ul>";
-  
-        return data;
-    }
-
-    function createItem(item)
-    {
-        console.log('in Item: ' + item['active']);
-        var hasSub  = "";
-        var active = "";
-        var subContent = "";
-        var itemId = 'MeneuItem_' + makeId() + ItemCounter++;
-        var data = '<li>' + '<a id = "'+ itemId +'">' + item['label'] + '</a>';
-
-        if(item['subItems'] !== null && !item['active'])
-        {
-            data = '<li class = "ui-has-sub">' + '<a id = "'+  itemId +'">' + item['label'] + '</a>';       
-        }
-        else if(item['active'] && item['subItems'] === null)
-        {
-            data = '<li class = "ui-active">' + '<a id = "'+ itemId +'">' + item['label'] + '</a>';   
-        }
-        else if( item['active'] && item['subItems'] !== null)
-        {
-            data = '<li class = "ui-active ui-has-sub">' + '<a id = "'+ itemId +'">' + item['label'] + '</a>';     
-        }
-
-        if( $.isFunction(item['onclick']) )
-        {
-            OnClickCallbacks[itemId] = item['onclick'];
-        }
-        else if(typeof item['onclick'] === "string")
-        {
-            OnClickCallbacks[itemId] = function (){ window.location.href = item['onclick'];};
-        }
-        else
-        {
-            OnClickCallbacks[itemId] = function (){ return false;};
-        }
-
-        ItemIds.push(itemId);
-
-        if(item['subItems'] !== null)
-        {
-            data += createList(item['subItems']);
-        }
-
-        data += "</li>";
-
-        return data;
-    }
-
-    function makeId()
+    function makeId(num)
     {
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     
-        for( var i=0; i < 10; i++ )
+        for( var i=0; i < num; i++ )
         {
             text += possible.charAt(Math.floor(Math.random() * possible.length));
         }
