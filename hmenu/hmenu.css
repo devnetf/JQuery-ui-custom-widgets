@@ -1,3 +1,10 @@
+/*
+ *  Document   : hmenu.css
+ *  Created on : 28-Sept-2013
+ *  Author     : Shao Hang He
+ *  Description: core CSS File for hmenu plugin
+ */
+
 .ui-hmenu ul, .ui-hmenu li {list-style: none; margin: 0; padding: 0;}
 .ui-hmenu ul {position: relative; z-index: 97; }
 .ui-hmenu ul li { float: left; min-height: 1px; vertical-align: middle;}
