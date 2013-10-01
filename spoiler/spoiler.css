@@ -1,0 +1,27 @@
+.ui-spoiler
+{
+    border: none;
+    border-radius:5px;
+    color: #474C4C;
+    margin: 10px;
+    overflow:hidden;
+}
+/**/
+.ui-spoiler-header
+{
+    float: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.ui-spoiler-button
+{
+    float: right;
+}
+
+.ui-spoiler-hidden
+{
+    display: none;
+    clear: both;
+}

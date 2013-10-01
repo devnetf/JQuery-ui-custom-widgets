@@ -1,0 +1,103 @@
+.ui-hmenu ul, .ui-hmenu li {list-style: none; margin: 0; padding: 0;}
+.ui-hmenu ul {position: relative; z-index: 97; }
+.ui-hmenu ul li { float: left; min-height: 1px; vertical-align: middle;}
+.ui-hmenu ul li.hover,
+.ui-hmenu ul li:hover {position: relative; z-index: 99; cursor: default;}
+.ui-hmenu ul ul {visibility: hidden; position: absolute; top: 100%; left: 0; z-index: 98; width: 100%;}
+.ui-hmenu ul ul li {float: none;}
+.ui-hmenu ul ul ul {top: 0; left: auto; right: -99.5%; }
+.ui-hmenu ul li:hover > ul { visibility: visible;}
+.ui-hmenu ul ul {bottom: 0; left: 0;}
+.ui-hmenu ul ul {margin-top: 0; }
+.ui-hmenu ul ul li {font-weight: normal;}
+.ui-hmenu a { display: block; line-height: 1em; text-decoration: none; }
+
+.ui-hmenu {
+ /*light grey bg*/
+  background: #e7f3f3;
+  border-bottom: 4px solid #3B3C3C; /*line under navbar*/
+  margin: 10px;
+  font-weight:bold;
+  font-size: 12px;
+  border-radius: 5px;
+  padding-top: 5px;
+  padding-left: 6px;
+  padding-right: 6px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.ui-hmenu > ul { *display: inline-block; }
+
+.ui-hmenu:after, .ui-hmenu ul:after {
+  content: '';
+  display: block;
+  clear: both; 
+}
+
+.ui-hmenu a {
+    /*light grey button bg*/
+    background: #C0FFFF;
+    color: #1E1E1E;/*font color*/
+    padding: 0 15px;
+    font-size: 1.2em;   
+    
+}
+.ui-hmenu ul { /*text-transform: uppercase;*/ }
+
+.ui-hmenu ul ul {
+    border-top: 4px solid #1E1E1E;
+    text-transform: none;
+    min-width: 190px; 
+}
+.ui-hmenu ul ul a {
+    /*style for dropdown*/
+    background: #3B3C3C; /*here to put translucency*/
+    /*opacity: .9;*/
+    color: #FFF;
+    border: 1px solid #e7f3f3;
+    border-top: 0 none;
+    line-height: 150%;
+    padding: 10px 20px; 
+}
+
+/*style for sub menu*/
+.ui-hmenu ul ul ul { border-top: 0 none; }
+.ui-hmenu ul ul li { position: relative }
+.ui-hmenu > ul > li > a { line-height: 30px;  }
+
+.ui-hmenu ul ul li:first-child > a { border-top: 1px solid #e7f3f3; }
+.ui-hmenu ul ul li:hover > a { background: #1E1E1E; } /*side menu*/
+
+.ui-hmenu ul ul li:last-child > a {
+  border-radius: 0 0 3px 3px;
+  box-shadow: 0 1px 0 #e7f3f3; 
+}
+.ui-hmenu ul ul li:last-child:hover > a { border-radius: 0 0 0 3px; }
+
+.ui-hmenu ul ul li.ui-has-sub > a:after {
+  /*extend content*/
+  content: '+';
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  margin-top: -8px;
+}
+/*end style for sub menu*/
+.ui-hmenu ul li:hover > a, .ui-hmenu ul li.ui-active > a {
+    /*hover main menu items*/
+    background: #969696; 
+    color: #FFF;
+}
+.ui-hmenu ul li.ui-has-sub > a:after {
+  /*extend content for main items*/
+    content: '+';
+    margin-left: 5px; 
+}
+.ui-hmenu ul li.last ul {
+    left: auto;
+    right: 0; 
+}
+.ui-hmenu ul li.last ul ul {
+    left: auto;
+    right: 99.5%;
+}
