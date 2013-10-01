@@ -1,3 +1,10 @@
+/*
+ *  Document   : spoiler.js
+ *  Created on : 28-Sept-2013
+ *  Author     : Shao Hang He
+ *  Description: core Javascript File for spoiler plugin
+ */
+
     $.widget( "custom.spoiler", {
       // default options
       options: {
@@ -13,7 +20,7 @@
         toggleCallback : null,
         data: null
       },
-
+ 
       global_vars: {
         button_clicks : 0
       },
