@@ -2,7 +2,7 @@ JQuery-ui-custom-widgets
 ========================
 
 *	add-ons for JQuery-UI
-*	Coming soon: JSFIDDLE examples
+*	JSFIDDLE examples: http://jsfiddle.net/masterzeroquest/k4wpp/
 
 hmenu.js
 --------
