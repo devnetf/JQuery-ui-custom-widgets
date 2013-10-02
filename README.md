@@ -110,7 +110,7 @@ spoiler.js
 	</div>
 
 ######JavaScript: 
-$('#myspoiler').spoiler();
+	$('#myspoiler').spoiler();
 
 ####custom options: 
 ######HTML:
