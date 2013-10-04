@@ -3,6 +3,7 @@ JQuery-ui-custom-widgets
 
 *	add-ons for JQuery-UI
 *	JSFIDDLE demo examples: http://jsfiddle.net/masterzeroquest/k4wpp/
+*	Demo 2 with array structure for data option: http://jsfiddle.net/masterzeroquest/k4wpp/1/
 
 hmenu.js
 --------
@@ -93,6 +94,55 @@ hmenu.js
 	                    } 
 	               }
 	                    
+	    });
+	    
+######The data option also allows to use array instead of object.
+
+	$('#mymenu').hmenu({
+	
+	      data:  [
+	           
+	                    {
+	                       label: 'item 1',
+	                       active : true,
+	                       subItems: null,
+	                       onclick: function (){ alert('heey');},
+	                    }, 
+	
+	          
+	                     {
+	                        label: 'item 2',
+	                        active : false,
+	                        onclick: function (){ alert('heey2');},
+	                        subItems:  [
+	                                  
+	                                     {
+	                                        label : 'gg', 
+	                                        active: false, 
+	                                        subItems: null,
+	                                        onclick: function (){   
+	                                            alert('heey3');
+	                                        }
+	                                     }, 
+	                                
+	                                     {
+	                                        label : 'gg2', 
+	                                        active: false, 
+	                                        subItems: null, 
+	                                        onclick: "http://www.google.ca"
+	                                     },                              
+	                               ]
+	                     },
+	
+	                     
+	                     {
+	                       label: 'item 3',
+	                       active : false,
+	                       subItems: null,
+	                       onclick: function (){ alert($(this).html());},
+	                     } 
+	               ]
+	
 	    });
 
 *Note that the "data" option allows you to give a JSON to populate the menu instead of writing html. If the data is not setted, the widget will look for an html body.
