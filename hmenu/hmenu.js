@@ -68,7 +68,8 @@
         curr.element.css( "padding-left", this.options.itemsPaddingLeft);
         curr.element.css( "padding-right", this.options.itemsPaddingRight);
 
-        curr.element.find('.ui-active').css("background",  this.options.activeItemColor);
+        curr.element.find('ul li.ui-active > a').css("background",  this.options.activeItemColor);
+        curr.element.find('ul li').children('a').hover(function (){ $(this).css("background",  curr.options.activeItemColor); });
         curr.element.find('ul ul a').css("background", this.options.dropdownItemColor);
         curr.element.find('ul ul a').css("opacity", this.options.dropdownItemOpacity);
         curr.element.find('ul ul').css("border-top-color",  this.options.activeItemColor);
