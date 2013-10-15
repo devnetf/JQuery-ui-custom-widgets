@@ -38,7 +38,7 @@
 
         if(this.options.data !== null)
         {
-             this.element.html(this.createList(this.options.data));
+            this.element.html(this.createList(this.options.data));
         }
 
         for(var i = 0; i < this.global_vars.ItemIds.length; i++)
@@ -47,6 +47,24 @@
         }
 
         this.element.addClass( "ui-hmenu" ).disableSelection();
+
+        curr.element.children('ul').children('li').children('a').click(function (){
+
+            curr.element.find('ul li.ui-active').each(function (){
+
+                $(this).removeClass('ui-active');
+                $(this).children('a').attr("style",  '');
+                $(this).css("background",  curr.options.backgroundColor);
+
+            });
+
+            $(this).parent().addClass('ui-active');
+            $(this).children('a').attr("style",  '');
+            $(this).parent().css("background",  curr.options.activeItemColor);
+
+            curr._refresh();
+        });
+
         this._refresh();
 
       },
@@ -68,23 +86,16 @@
         curr.element.css( "padding-left", this.options.itemsPaddingLeft);
         curr.element.css( "padding-right", this.options.itemsPaddingRight);
 
-        curr.element.find('ul li.ui-active > a').css("background",  this.options.activeItemColor);
-        curr.element.find('ul li').children('a').hover(function (){ $(this).css("background",  curr.options.activeItemColor); });
+        
+        curr.element.find('ul li.ui-active > a').css("background",  this.options.activeItemColor).unbind('mouseenter mouseleave');
+        curr.element.find('ul li:not(.ui-active)').children('a').hover(
+          function (){ $(this).css("background",  curr.options.activeItemColor); }, 
+          function (){ $(this).css("background",  curr.options.backgroundColor); }
+        );
+
         curr.element.find('ul ul a').css("background", this.options.dropdownItemColor);
         curr.element.find('ul ul a').css("opacity", this.options.dropdownItemOpacity);
         curr.element.find('ul ul').css("border-top-color",  this.options.activeItemColor);
-
-        curr.element.children('ul').children('li').children('a').click(function (){
-
-            curr.element.find('ul li').each(function (){
-
-                $(this).removeClass('ui-active');
-
-            });
-
-            $(this).parent().addClass('ui-active');
-
-        });; 
 
         // trigger a callback/event
         this._trigger( "change" );
@@ -137,7 +148,7 @@
             var hasSub  = "";
             var active = "";
             var subContent = "";
-            var itemId = 'MeneuItem_' + makeId(10) + this.global_vars.ItemCounter++;
+            var itemId = 'MeneuItem_' + this.makeId(10) + this.global_vars.ItemCounter++;
             var data = '<li>' + '<a id = "'+ itemId +'">' + item['label'] + '</a>';
 
             if(item['subItems'] !== null && !item['active'])
@@ -176,21 +187,23 @@
             data += "</li>";
 
             return data;
+      },
+
+      makeId: function(num)
+      {
+          var text = "";
+          var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+      
+          for( var i=0; i < num; i++ )
+          {
+              text += possible.charAt(Math.floor(Math.random() * possible.length));
+          }
+      
+          return text;
       }      
 
     });
 
-    function makeId(num)
-    {
-        var text = "";
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     
-        for( var i=0; i < num; i++ )
-        {
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-    
-        return text;
-    }
 
     
