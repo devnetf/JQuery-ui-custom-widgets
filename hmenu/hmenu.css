@@ -43,8 +43,6 @@
 
 .ui-hmenu a {
     /*light grey button bg*/
-    background: #C0FFFF;
-    color: #1E1E1E;/*font color*/
     padding: 0 15px;
     font-size: 1.2em;   
     
@@ -52,9 +50,8 @@
 .ui-hmenu ul { /*text-transform: uppercase;*/ }
 
 .ui-hmenu ul ul {
-    border-top: 4px solid #1E1E1E;
+    /*border-top: 4px solid #1E1E1E;*/
     text-transform: none;
-    min-width: 190px; 
 }
 .ui-hmenu ul ul a {
     /*style for dropdown*/
@@ -62,8 +59,7 @@
     /*opacity: .9;*/
     color: #FFF;
     border: 1px solid #e7f3f3;
-    border-top: 0 none;
-    line-height: 150%;
+    border-top: 0 none;    
     padding: 10px 20px; 
 }
 
@@ -91,9 +87,9 @@
 }
 /*end style for sub menu*/
 .ui-hmenu ul li:hover > a, .ui-hmenu ul li.ui-active > a {
-    /*hover main menu items*/
-    background: #969696; 
-    color: #FFF;
+    /*hover main menu items
+    background: #C5C5C5; 
+    color: #FFF;*/
 }
 .ui-hmenu ul li.ui-has-sub > a:after {
   /*extend content for main items*/
