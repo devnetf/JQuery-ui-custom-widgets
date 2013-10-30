@@ -21,17 +21,15 @@
         data: null
       },
  
-      global_vars: {
-        button_clicks : 0
-      },
       // the constructor
       _create: function() {
         
         var curr = this;
+        curr.element.data('button_clicks', 0);
 
         if(this.options.data !== null)
         {
-             this.element.html(generateSpoiler(this.options.data));
+             this.element.html(this.generateSpoiler(this.options.data));
         }
 
         this.element.addClass( "ui-spoiler" ).disableSelection();
@@ -49,7 +47,7 @@
                 $(this).parent().find("div[class=ui-spoiler-hidden]").toggle(curr.options.toggleSpeed, curr.options.toggleEasing, curr.options.toggleCallback);
             }
              
-            if(curr.global_vars.button_clicks % 2 === 0)
+            if(curr.element.data('button_clicks') % 2 === 0)
             {
                 //&#8743; is up arrow in html
                 $(this).val($('<div/>').html('&#8743;').text());
@@ -60,7 +58,7 @@
                 $(this).val($('<div/>').html('&#8744;').text()); 
             }
 
-            curr.global_vars.button_clicks++;
+            curr.element.data('button_clicks', curr.element.data('button_clicks') + 1);
         
         });
 
@@ -108,33 +106,18 @@
       _setOption: function( key, value ) {
         return;
         this._super( key, value );
-      }
-    });
-   
-    function generateSpoiler(data)
-    {
+      },
+
+      generateSpoiler: function (data)
+      {
         var output = "";
         output += '<span>' + data['header']  + '</span><input type = "button" value = "" />';
         output +=  '<div class = "ui-spoiler-hidden">' + data['content'] + '</div>';
         
         return output;
-    }
+      }  
+    });
+   
+    
 
-    function sumStringArray(array, delimiter)
-    {
     
-        var str = "";
-    
-        if(array.length > 0)
-        {
-            for(var i in array)
-            {
-                if(i < array.length - 1)
-                {
-                    str += array[i] + delimiter;
-                }       
-            }
-        }
-    
-        return str;
-    }
