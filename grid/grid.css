@@ -1,0 +1,76 @@
+
+.ui-grid table
+{
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 0.9em;
+  color:#333333;
+  border-width: 1px;
+  border-color: #666666;
+  border-collapse: collapse;
+}
+
+.ui-grid table th
+{
+  border-width: 1px;
+  padding: 8px;
+  border-style: solid;
+  border-color: #666666;
+  background-color: #dedede; 
+}
+
+.ui-grid table td 
+{
+  border-width: 1px;
+  padding: 8px;
+  border-style: solid;
+  border-color: #666666;
+  background-color: #ffffff;
+}
+
+.ui-grid-col-setting
+{
+  display: none;
+  position:absolute;
+  background: #F3F3F3;
+  padding: 10px;
+  border-radius: 5px;
+  border:1px solid #000;
+  z-index: 999;
+}
+
+.grid-ui-icon
+{
+  font-size: 0.5em;
+  margin-left: 2px;
+  margin-right: 2px; 
+}
+
+/***Do not change below***/
+.ui-grid-unmatch_rows
+{
+  display: none;
+}
+
+.ui-grid-not_curr_page_rows
+{
+  display: none;
+}
+
+.ui-grid-truncate
+{
+  display:inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ui-grid-tooltip
+{
+  display: none;
+  position:absolute;
+  background: #F3F3F3;
+  padding: 3px;
+  border-radius: 5px;
+  border:1px solid #000;
+  z-index: 999;
+}
