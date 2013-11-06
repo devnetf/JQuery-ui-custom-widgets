@@ -9,6 +9,7 @@
       // default options
       options: {
         maxItemsPerPage:null,
+        refresh : null,
         data: null
       },
  
@@ -19,21 +20,25 @@
         var cdata = curr.options.data;
         curr.element.data('setting_button_clicks', 0);
         curr.element.data('numPages', 1);
-  
+
+        //make an id for the current element if it does not have one
+        if(curr.element.attr('id') == "" || curr.element.attr('id') === undefined || curr.element.attr('id') === null)
+        {
+          curr.element.attr('id', 'grid-' + _makeId(10));
+        }
+
+        //build html of the grid 
         if(cdata !== null)
         {
-          this.element.html(this.buildGrid(cdata));
+          this.element.html(this._buildGrid(cdata));
         }
         
-        for(var i in this.options.data['schema'])
+        for(var i in cdata['schema'])
         {
           if(cdata['schema'][i]['filterable'])
           {
-
-            //filtering with existing data
-            $('#'+ curr.element.attr('id') + '_unique_filter_' + cdata['schema'][i]['name']).change({field_index: i},function (e){
-
-                //rebuild the grid with the filter result or hide the non-match rows
+            //filtering with existing data (dropdown menu)
+            $('#'+ curr.element.attr('id') + '_unique_filter_' + cdata['schema'][i]['name']).change({field_index: i}, function (e){
 
               var match_rows = [];
 
@@ -76,7 +81,7 @@
               }                                                  
 
               //refresh to page 1
-              curr.refreshPages();
+              curr._refreshPages();
 
             }); 
 
@@ -126,13 +131,14 @@
               }    
 
               //refresh to page 1
-              curr.refreshPages();
+              curr._refreshPages();
 
             });
 
           }
           //end filterable settings
 
+          //actions is only for checkbox/radio button fields
           if($.isPlainObject(cdata['schema'][i]['actions']) && !$.isEmptyObject(cdata['schema'][i]['actions']))
           {
             $('#' + curr.element.attr('id') + '_' + cdata['schema'][i]['name'] + '_action_dropdown').change({field_index: i},function (e){
@@ -166,61 +172,86 @@
                 }
         
                 actionFunc(checkedItems);
-
               }
 
+              //reset the option dropdown after 3 seconds
               setTimeout(function(){ currObj.val(""); }, 3000); 
-
             });
-
           }
 
           //bind the click callback!
-          for(var j = 0; j < cdata['records'].length; j++ )
+          for(var j = 0; j < cdata['records'].length; j++)
           {
             //index with element id    
             var elementId = "#" + curr.element.attr('id') + cdata['schema'][i]['name'] + '_' + j;
 
+            if(!this._isNullOrEmpty(cdata['schema'][i]['width']))
+            {
+              var width = parseInt(cdata['schema'][i]['width']);
+
+              $(elementId).width(width);
+
+              if(cdata['schema'][i]['truncate'])
+              {
+                $(elementId).addClass('ui-grid-truncate');
+              }
+
+            }
+
+            if(!this._isNullOrEmpty(cdata['schema'][i]['height']))
+            {
+              var height = parseInt(cdata['schema'][i]['height']);
+
+              $(elementId).height(height);
+
+              if(cdata['schema'][i]['truncate'])
+              {
+                $(elementId).addClass('ui-grid-truncate');
+              }
+
+            }
+
+            //pass in the current row to the click callback
             if($.isFunction(cdata['schema'][i]['onclick']))
             {                
               $(elementId).click({elementId : elementId, row: cdata['records'][j]},cdata['schema'][i]['onclick']); 
             }
 
-            if($.isFunction(cdata['schema'][i]['onhover']))
-            {      
-              //to be implement...          
-              //$(elementId).click({elementId : elementId, row: this.options.data['records'][j]},this.options.data['schema'][i]['onclick']); 
+            if(cdata['schema'][i]['tooltip'])
+            {        
+              $(elementId).parent().hover(function (e){ $(this).children('.ui-grid-tooltip').toggle('slow', 'swing');} );
             }
           } 
                   
         } 
 
         //toggle filter setting column
-        $('.'+ curr.element.attr('id') + '_filterable_column').click(function (){
+        $('.'+ curr.element.attr('id') + '_setting_column').click(function (){
 
-          $('#'+ curr.element.attr('id') + '_filter_setting').toggle();
+          $('#'+ curr.element.attr('id') + '_setting_panel_' + $(this).data('col-name')).toggle('slow', 'swing');
 
-          if(curr.element.data('setting_button_clicks') % 2 === 0)
+          if($(this).data('setting-button-clicks') % 2 === 0)
           {
               //&#8743; is up arrow in html
-              $('.'+ curr.element.attr('id') + '_filterable_column').val($('<div/>').html('&#8743;').text());
+              $(this).val($('<div/>').html('&#8743;').text());
           }
           else
           {
                //&#8744; is down arrow in html
-              $('.'+ curr.element.attr('id') + '_filterable_column').val($('<div/>').html('&#8744;').text()); 
+              $(this).val($('<div/>').html('&#8744;').text()); 
           }
-
-          curr.element.data('setting_button_clicks', curr.element.data('setting_button_clicks') + 1);
+         
+          var newNum = $(this).data('setting-button-clicks') + 1;      
+          $(this).data('setting-button-clicks', newNum);
 
         });
 
+         //bind events to the paging controls
         if(curr.options.maxItemsPerPage !== null)
-        {
-          //bind events to the paging controls 
+        { 
           $('#'+ curr.element.attr('id') + '_pages').change(function (){
 
-            curr.gotoPage($(this).val());
+            curr._gotoPage($(this).val());
 
           });
 
@@ -231,7 +262,7 @@
             if(--currPage > 0)
             {
               $('#'+ curr.element.attr('id') + '_pages').val(currPage);
-              curr.gotoPage(currPage);
+              curr._gotoPage(currPage);
             }
             
           });
@@ -243,63 +274,165 @@
             if(++currPage <= curr.element.data('numPages'))
             {
               $('#'+ curr.element.attr('id') + '_pages').val(currPage);
-              curr.gotoPage(currPage);
+              curr._gotoPage(currPage);
             }
 
           });
 
         }
 
-        //check all!! =D
+        //check all the element on current page!! =D
         $('#' + curr.element.attr('id') + ' .master_checkbox').click(function (){
 
-              var elementClass = curr.element.attr('id') + $(this).data('name');
+          var elementClass = curr.element.attr('id') + $(this).data('name');
 
-              if(this.checked)
+          if(this.checked)
+          {
+            $('.' + elementClass).each(function (index, value){
+
+              var item_row = $(this).closest('tr');
+
+              if(!item_row.hasClass('ui-grid-unmatch_rows') && !item_row.hasClass('ui-grid-not_curr_page_rows'))
               {
-                $('.' + elementClass).each(function (index, value){
-
-                  var item_row = $(this).closest('tr');
-
-                  if(!item_row.hasClass('ui-grid-unmatch_rows') && !item_row.hasClass('ui-grid-not_curr_page_rows'))
-                  {
-                    $(this).prop('checked', true);
-                  }
-
-                });
-              }
-              else
-              {
-                $('.' + elementClass).each(function (index, value){
-
-                  var item_row = $(this).closest('tr');
-
-                  if(!item_row.hasClass('ui-grid-unmatch_rows') && !item_row.hasClass('ui-grid-not_curr_page_rows'))
-                  {
-                    $(this).prop('checked', false);
-                  }
-
-                });
+                $(this).prop('checked', true);
               }
 
+            });
+          }
+          else
+          {
+            $('.' + elementClass).each(function (index, value){
+
+              var item_row = $(this).closest('tr');
+
+                if(!item_row.hasClass('ui-grid-unmatch_rows') && !item_row.hasClass('ui-grid-not_curr_page_rows'))
+                {
+                  $(this).prop('checked', false);
+                }
+            });
+          }
         });
 
+        //initialize to page one 
         if(curr.options.maxItemsPerPage !== null)
         {
-         curr.gotoPage(1);
+          curr._gotoPage(1);
         } 
 
+        //refresh set up: the return data 
+        if(curr.options.refresh !== null)
+        {
+          $('#' + curr.element.attr('id') + '_refresh').click(function (){
+
+            $.ajax({
+              type: curr.options.refresh['type'],
+              url: curr.options.refresh['url'],
+              data: curr.options.refresh['data'],
+              dataType: "json",
+              success: function(data) {
+
+                curr.options.data['records'] = data;
+                curr._refreshData();    
+
+              },
+                error: function (xhr, ajaxOptions, thrownError) {
+              
+                  alert(xhr.responseText);
+
+              }
+            });
+          });
+        }
+    
         this.element.addClass( "ui-grid" ).disableSelection();
-        this._refresh();
+        $('input[type=button]').button();
+        //this._refresh();
+      },
+
+      _refresh: function() {
+
       },
  
       // called when created, and later when changing options
-      _refresh: function() {
+      _refreshData: function() {
         
         var curr = this;
+        var id_column_name = null;
+        var itemsObject = this.options.data;
+       
+        //query for the first item that is labeled as id
+        for(var i in itemsObject['schema'])
+        {
+          if(itemsObject['schema'][i]['id'])
+          {
+            id_column_name = itemsObject['schema'][i]['name'];
+            break;
+          } 
+        }
         
-        $('input[type=button]').button();
-        // trigger a callback/event
+        if(id_column_name === null)
+        {
+          alert("No coln is defined as id!");
+          
+        }
+
+        //foreach row, try to find the appropriete data to overwrite
+        $("#" + curr.element.attr('id') + " .ui-grid-record_row").each(function (index, value) {
+
+          var keyVal = $(this).data('id-col-val');
+
+          for(var j in itemsObject['records'])
+          {
+            if(itemsObject['records'][j][id_column_name] == keyVal)
+            {
+              for(var k in itemsObject['schema'])
+              {
+                var type = itemsObject['schema'][k]['type'];
+                var elementName = itemsObject['schema'][k]['name'];
+                var elementId = "#" + curr.element.attr('id') + elementName + '_' + index;
+
+                switch(type)
+                {
+                   case 'text': 
+        
+                      $(elementId).html(itemsObject['records'][j][elementName]);
+                      $(elementId).next().html(itemsObject['records'][j][elementName]); 
+
+                   break;
+
+                   case 'checkbox':          
+                   break;
+
+                   case 'radio':                  
+                   break;
+
+                   case 'image': 
+
+                      $(elementId).attr('src', itemsObject['records'][j][elementName]);
+                      $(elementId).next().html(itemsObject['records'][j][elementName]); 
+
+                   break;
+
+                   case 'button':
+
+                      $(elementId).val(itemsObject['records'][j][elementName]);
+                      $(elementId).next().html(itemsObject['records'][j][elementName]); 
+
+                   break;
+
+                   default:
+                   //text
+                      $(elementId).html(itemsObject['records'][j][elementName]);
+                      $(elementId).next().html(itemsObject['records'][j][elementName]); 
+                }
+              }
+              break;
+            }
+          }
+          
+        });
+
+        // i a callback/event
         this._trigger( "change" );
       },
  
@@ -312,25 +445,53 @@
  
       // _setOptions is called with a hash of all options that are changing
       // always refresh when changing options
-      _setOptions: function() {
+      _setOptions: function(options) {
         // _super and _superApply handle keeping the right this-context
-        this._superApply( arguments );
-        this._refresh();
+        //this._superApply( arguments );
+        /*for(var opt in options)
+        {
+          this._setOption(opt, options[opt]);
+        }*/
+        //this._refresh();
       },
  
       // _setOption is called for each individual option that is changing
       _setOption: function( key, value ) {
-        this._super( key, value ); 
-        return;
+        //this._super( key, value ); 
+        this.options[ key ] = value;
+        this._refresh();
       },
 
-      buildGrid: function (itemsObject){
+      getData: function ()
+      {
+          return  this.options.data;
+      },
+
+      setData: function (data)
+      {
+         this.options.data = data;
+         console.log(this.options.data);
+         this._refreshData();
+      },
+
+      _buildGrid: function (itemsObject){
 
         var gridhtml = "<table><tr>";
         var curr = this;
         var numVisibleItems = 0;
 
-        for( var i in itemsObject['schema'])
+        var id_column_name = null;
+
+        for(var i in itemsObject['schema'])
+        {
+          if(itemsObject['schema'][i]['id'])
+          {
+            id_column_name = itemsObject['schema'][i]['name'];
+            break;
+          } 
+        }
+
+        for(var i in itemsObject['schema'])
         {
 
           var global_control = '';
@@ -347,29 +508,14 @@
 
           if(itemsObject['schema'][i]['filterable'] || ($.isPlainObject(itemsObject['schema'][i]['actions']) && !$.isEmptyObject(itemsObject['schema'][i]['actions'])))
           {
-            gridhtml += '<th>' + global_control + itemsObject['schema'][i]['label'] + ' <input type = "button" class = "'+ curr.element.attr('id') + '_filterable_column grid-ui-icon" value ="&#8744;"/>' + '</th>';
+            gridhtml += '<th>' + global_control + itemsObject['schema'][i]['label'] + ' <input type = "button" data-setting-button-clicks = "0" data-col-name = "'+ itemsObject['schema'][i]['name'] +'" class = "'+ curr.element.attr('id') + '_setting_column grid-ui-icon" value ="&#8744;"/>';
           }
           else
           {
-            gridhtml += '<th>' +  global_control + itemsObject['schema'][i]['label'] + '</th>';
+            gridhtml += '<th>' +  global_control + itemsObject['schema'][i]['label'];
           }
 
-          numVisibleItems++;  
-
-        } 
-
-        gridhtml += "</tr>";
-        gridhtml += '<tr id = "'+ curr.element.attr('id') + '_filter_setting" style = "display:none;">';
-
-        for( var i in itemsObject['schema'])
-        {
-
-          if(itemsObject['schema'][i]['hidden'])
-          {
-            continue;
-          }
-
-          gridhtml += "<td>";
+          gridhtml += '<div id = "'+ curr.element.attr('id') + '_setting_panel_' + itemsObject['schema'][i]['name'] + '" class = "ui-grid-col-setting" >';
 
           //implement filtering form here
           if(itemsObject['schema'][i]['filterable'])
@@ -380,7 +526,7 @@
                items.push(value[itemsObject['schema'][i]['name']]);                          
             });
 
-            items = this.unique(items);
+            items = this._unique(items);
             gridhtml += '<select id = "'+ curr.element.attr('id') + '_unique_filter_' + itemsObject['schema'][i]['name'] + '">';
             gridhtml += '<option value=""> Please select a value </option>';
 
@@ -409,17 +555,28 @@
             actions += '</select>';
 
             gridhtml += actions;
-          }         
+          }
 
-          gridhtml += "</td>";
-        }
+          gridhtml += '</div>';
+          gridhtml += '</th>';
+
+          numVisibleItems++;  
+
+        } 
 
         gridhtml += "</tr>";
 
         for(var row in itemsObject['records'])
         {
+            
+            var rowIdVal = ""; 
 
-            gridhtml += '<tr class = "ui-grid-record_row">';
+            if(id_column_name !== null)
+            {
+                rowIdVal = itemsObject['records'][row][id_column_name]
+            }
+
+            gridhtml += '<tr class = "ui-grid-record_row" data-row-id = "' + row + '" data-id-col-val = "'+ rowIdVal +'">';
 
           
             for(var j in itemsObject['schema'])
@@ -458,7 +615,7 @@
 
                    case 'image': 
 
-                      gridhtml += '<img width = "' + schema['width'] + '" height = "' + schema['height'] + '" id = "'+ elementId + '" src = "' + itemsObject['records'][row][j] + '" />';
+                      gridhtml += '<img id = "'+ elementId + '" src = "' + itemsObject['records'][row][fieldName] + '" />';
 
                    break;
 
@@ -472,6 +629,10 @@
                    //text
                       gridhtml += '<span id = "'+ elementId + '">'+ itemsObject['records'][row][fieldName] + '</span>'; 
                 }
+
+                gridhtml += '<div class = "ui-grid-tooltip">';
+                gridhtml += itemsObject['records'][row][fieldName];
+                gridhtml += '</div>';
 
                 gridhtml += "</td>";
             }
@@ -499,6 +660,12 @@
 
           gridhtml += '</select>';
           gridhtml += '<input type ="button" id = "' + curr.element.attr('id') + '_next_page" class = "grid-ui-icon" value = ">" />';
+
+          if(curr.options.refresh !== null)
+          {
+            gridhtml += '<input type ="button" id = "' + curr.element.attr('id') + '_refresh" class = "grid-ui-icon" value = "R" />';
+          }
+
           gridhtml += '</span>';
           gridhtml += '<span id = "' + curr.element.attr('id') + '_page_description" style = "float: right;">';        
           gridhtml += '</span>';
@@ -511,7 +678,7 @@
 
       },
 
-      gotoPage: function (pageNum){
+      _gotoPage: function (pageNum){
         //id = "' + curr.element.attr('id') + '_page_description" 
         //display the selected page            
         var curr = this;
@@ -561,13 +728,13 @@
         
       },
 
-      refreshPages: function(){
+      _refreshPages: function(){
 
         var curr = this;
         var max = parseInt(curr.options.maxItemsPerPage,10);
         var numPages = Math.ceil((curr.options.data['records'].length - $('.ui-grid-unmatch_rows').size())/max);
 
-        curr.gotoPage(1);
+        curr._gotoPage(1);
         var newOptions = "";
 
         for(var opt = 1; opt <= numPages; opt++)
@@ -580,13 +747,31 @@
 
       },
 
-      unique: function (list) {
+      _unique: function (list) {
         var result = [];
         $.each(list, function(i, element) {
           if ($.inArray(element, result) == -1) result.push(element);
         });
         return result;
-      }
+      },
+
+      _makeId: function(num)
+      {
+          var text = "";
+          var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+      
+          for( var i=0; i < num; i++ )
+          {
+              text += possible.charAt(Math.floor(Math.random() * possible.length));
+          }
+      
+          return text;
+      },
+
+      _isNullOrEmpty: function(val)
+      {
+          return (val === undefined || val === null || val.length == 0);
+      },         
     });
    
    
