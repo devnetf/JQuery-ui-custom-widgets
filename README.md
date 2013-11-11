@@ -5,6 +5,81 @@ JQuery-ui-custom-widgets
 *	JSFIDDLE demo examples: http://jsfiddle.net/masterzeroquest/k4wpp/
 *	Demo 2 with array structure for data option: http://jsfiddle.net/masterzeroquest/k4wpp/1/
 
+grid.js
+-------
+
+*	includes: jquery, jquery-ui, grid.js, grid.css
+
+#### basics structure:
+
+######HTML:
+	<div id = "mygrid" ></div>
+
+######JavaScript: 
+	var mygrid = $("#mygrid").grid({
+                maxItemsPerPage: null,
+                data: {
+                        schema : [
+                        { 
+                          label : 'Commands',
+                          name : "commands",
+                          type : 'checkbox',
+                          onclick: null, 
+                          actions: {
+                          
+                          	command1: {
+                          	
+                          	label: 'Command 1',
+                          	callback: function(select_rows){}
+                          	
+                          	},
+                          	command2: {
+                          	
+                          	label: 'Command 2',
+                          	callback: function(select_rows){}
+                          	
+                          	}
+                          
+                          },
+                          actionsMsg : 'Select a Command',  // default text display for actions dropdown.                 
+                        },
+                         { 
+                          label : 'Col 1',
+                          name : "col1",
+                          type : 'text',
+                          onclick: null, 
+                          height : '',
+                          width : '',
+                          id : true,
+                          hidden: true,
+                        },
+                        { 
+                          label : 'Col 2',
+                          name : "col2", // column name, similar structure as SQL tables column name.
+                          type : 'text', //type can be text, checkbox, radio, image or button. 
+                          onclick: function (row){}, //bind a click callback on each row.  
+                          height : '', //height and width of the cell
+                          width : '', 
+                          hidden: false, //if true, this column will be hidde
+                          id : false,  // flag this column as ID
+                          filterable: true, //enable filters
+                          tooltip : true, //enable tooltips, often use with truncate
+                          truncate : true //truncate text with CSS ellipsis 
+                        },
+                        ],
+                        records : [
+                        
+                        {commands: '', col1 : 'sometext', col2 : 'some value'},
+                        {commands: '', col1 : 'sometext2', col2 : 'some value2'},
+                        {commands: '', col1 : 'sometext3', col2 : 'some value3'},
+                        ]
+
+                      }
+
+            });  
+
+
+
 hmenu.js
 --------
 
