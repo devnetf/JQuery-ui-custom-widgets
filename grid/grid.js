@@ -481,7 +481,7 @@
 
       getData: function ()
       {
-          return  this.options.data;
+          return this.options.data;
       },
 
       setData: function (data)
