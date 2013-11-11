@@ -8,6 +8,12 @@
     $.widget( "custom.grid", {
       // default options
       options: {
+        fontSize: '0.9em',
+        fontColor: '#333333',
+        headerColor : '#dedede',
+        headerBorder : 1,
+        Color : '#ffffff',
+        Border : 1,
         maxItemsPerPage:null,
         refresh : null,
         data: null
@@ -342,10 +348,25 @@
     
         this.element.addClass( "ui-grid" ).disableSelection();
         //$('input[type=button]').button();
-        //this._refresh();
+        this._refresh();
       },
 
       _refresh: function() {
+
+        /*
+         fontSize: '0.9em',
+        fontColor: '#333333',
+        headerColor : '#dedede',
+        headerBorder : 1,
+        Color : '#ffffff',
+        */
+
+        this.element.find('table').css('font-size', this.options.fontSize);
+        this.element.find('table').css('color', this.options.fontColor);
+        this.element.find('table th').css('background-color', this.options.headerColor);
+        this.element.find('table th').css('border-width', this.options.headerBorder + 'px');
+        this.element.find('table td').css('background-color', this.options.Color);
+        this.element.find('table td').css('border-width', this.options.Border + 'px');
 
       },
  
