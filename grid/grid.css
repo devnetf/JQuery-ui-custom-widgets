@@ -114,7 +114,7 @@
 .ui-grid-page-dropdown-select
 {
   padding:3px;
-  width: 40px;
+  padding-right:20px; 
   margin: 5px;
   -webkit-border-radius:4px;
   -moz-border-radius:4px;
@@ -138,36 +138,41 @@
   position:relative;
 }
 
-.ui-grid-page-dropdown:after {
-    content:'<>';
-    font:11px "Consolas", monospace;
-    color:#aaa;
-    -webkit-transform:rotate(90deg);
-    -moz-transform:rotate(90deg);
-    -ms-transform:rotate(90deg);
-    transform:rotate(90deg);
-    right:8px; 
-    top:2px;
-    padding:0 0 2px;
-    border-bottom:1px solid #ddd;
-    position:absolute;
-    pointer-events:none;
+.ui-grid-page-dropdown:after 
+{
+  content:'<>';
+  font:11px "Consolas", monospace;
+  color:#6B6B6B;
+  -webkit-transform:rotate(90deg);
+  -moz-transform:rotate(90deg);
+  -ms-transform:rotate(90deg);
+  transform:rotate(90deg);
+  right:8px; 
+  top:1px;
+  padding: 1px;
+  border-bottom:1px solid #ddd;
+  position:absolute;
+  pointer-events:none;
+  background-color: #E7E4E4;
+  border-radius: 3px;
+  z-index: 60;
 }
 
-.ui-grid-page-dropdown:before {
-    content:'';
-    right:6px; top:0px;
-    width:20px; 
-    background:#f8f8f8;
-    position:absolute;
-    pointer-events:none;
-    display:block;
+.ui-grid-page-dropdown:before 
+{
+  content:'';
+  right:6px; top:0px;
+  width:20px; 
+  background:#f8f8f8;
+  position:absolute;
+  pointer-events:none;
+  display:block;
 }
 
 .ui-grid-setting-dropdown-select
 {
   padding:3px;
-  width: 155px;
+  padding-right:20px;
   -webkit-border-radius:4px;
   -moz-border-radius:4px;
   border-radius:4px;
@@ -190,30 +195,35 @@
   position:relative;
 }
 
-.ui-grid-setting-dropdown:after {
-    content:'<>';
-    font:11px "Consolas", monospace;
-    color:#aaa;
-    -webkit-transform:rotate(90deg);
-    -moz-transform:rotate(90deg);
-    -ms-transform:rotate(90deg);
-    transform:rotate(90deg);
-    right:8px; 
-    top:2px;
-    padding:0 0 2px;
-    border-bottom:1px solid #ddd;
-    position:absolute;
-    pointer-events:none;
+.ui-grid-setting-dropdown:after
+{
+  content:'<>';
+  font:11px "Consolas", monospace;
+  color:#6B6B6B;
+  -webkit-transform:rotate(90deg);
+  -moz-transform:rotate(90deg);
+  -ms-transform:rotate(90deg);
+  transform:rotate(90deg);
+  right:8px; 
+  top:2px;
+  padding: 1px;
+  border-bottom:1px solid #ddd;
+  position:absolute;
+  pointer-events:none;
+  background-color: #E7E4E4;
+  border-radius: 3px;
+  z-index: 60;
 }
 
-.ui-grid-setting-dropdown:before {
-    content:'';
-    right:6px; top:0px;
-    width:20px; 
-    background:#f8f8f8;
-    position:absolute;
-    pointer-events:none;
-    display:block;
+.ui-grid-setting-dropdown:before 
+{
+  content:'';
+  right:6px; top:0px;
+  width:20px; 
+  background:#f8f8f8;
+  position:absolute;
+  pointer-events:none;
+  display:block;
 }
 
 .grid-ui-icon-pages-control
@@ -223,10 +233,15 @@
 
 }
 
-
 .grid-ui-icon-refresh:focus
 {
   outline:none;
+}
+
+.maxItemsPerPage
+{
+  width: 100px;
+  margin-left: 10px;
 }
 
 /***Do not change below***/
