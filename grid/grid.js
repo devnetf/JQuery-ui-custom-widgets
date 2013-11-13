@@ -4,8 +4,8 @@
  *  Author     : Shao Hang He
  *  Description: core Javascript File for grid plugin
  */
-
     $.widget( "custom.grid", {
+
       // default options
       options: {
         fontSize: '0.9em',
@@ -312,6 +312,33 @@
           curr._gotoPage(1);
         } 
 
+        $('#' + curr.element.attr('id') +' .maxItemsPerPage').change(function (){
+
+          var itemsPerPage = parseInt($(this).val(), 10);
+
+          if(itemsPerPage > 0)
+          {
+            curr.options.maxItemsPerPage = itemsPerPage;
+            curr._refreshPages();
+          }         
+         
+        });
+    
+        this.element.addClass( "ui-grid" );
+        this._refresh();
+      },
+
+      _refresh: function() {
+
+        var curr = this;
+
+        this.element.find('table').css('font-size', this.options.fontSize);
+        this.element.find('table').css('color', this.options.fontColor);
+        this.element.find('table th').css('background-color', this.options.headerColor);
+        this.element.find('table th').css('border-width', this.options.headerBorder + 'px');
+        this.element.find('table td').css('background-color', this.options.Color);
+        this.element.find('table td').css('border-width', this.options.Border + 'px');
+
         //refresh set up: the return data 
         if(curr.options.refresh !== null)
         {
@@ -320,6 +347,7 @@
             var current = this;
 
             $(current).hide();
+            
             $('#' + curr.element.attr('id') + '_spinner').show();
 
             $.ajax({
@@ -345,28 +373,6 @@
             });
           });
         }
-    
-        this.element.addClass( "ui-grid" ).disableSelection();
-        //$('input[type=button]').button();
-        this._refresh();
-      },
-
-      _refresh: function() {
-
-        /*
-         fontSize: '0.9em',
-        fontColor: '#333333',
-        headerColor : '#dedede',
-        headerBorder : 1,
-        Color : '#ffffff',
-        */
-
-        this.element.find('table').css('font-size', this.options.fontSize);
-        this.element.find('table').css('color', this.options.fontColor);
-        this.element.find('table th').css('background-color', this.options.headerColor);
-        this.element.find('table th').css('border-width', this.options.headerBorder + 'px');
-        this.element.find('table td').css('background-color', this.options.Color);
-        this.element.find('table td').css('border-width', this.options.Border + 'px');
 
       },
  
@@ -374,7 +380,7 @@
       _refreshData: function() {
         
         var curr = this;
-        var id_column_name = null;
+        var id_column_names = [];
         var itemsObject = this.options.data;
        
         //query for the first item that is labeled as id
@@ -382,25 +388,39 @@
         {
           if(itemsObject['schema'][i]['id'])
           {
-            id_column_name = itemsObject['schema'][i]['name'];
-            break;
+            id_column_names.push(itemsObject['schema'][i]['name']);
           } 
         }
         
-        if(id_column_name === null)
+        if(id_column_names.length == 0)
         {
-          alert("No coln is defined as id!");
-          
+          alert("No coln is defined as id!");          
         }
 
         //foreach row, try to find the appropriete data to overwrite
         $("#" + curr.element.attr('id') + " .ui-grid-record_row").each(function (index, value) {
 
-          var keyVal = $(this).data('id-col-val');
+          var keyVals = $(this).data('id-col-val');
 
           for(var j in itemsObject['records'])
           {
-            if(itemsObject['records'][j][id_column_name] == keyVal)
+
+            var ids_matched = true;
+
+            if(id_column_names.length != keyVals.length)
+            {
+              continue;
+            }
+
+            for(var k in id_column_names)
+            {
+              if(itemsObject['records'][j][id_column_names[k]] != keyVals[k])
+              {
+                ids_matched = false;
+              }
+            }
+
+            if(ids_matched)
             {
               for(var k in itemsObject['schema'])
               {
@@ -457,37 +477,44 @@
       // revert other modifications here
       _destroy: function() {
         // remove generated elements
-       
+        this.element.empty();
+        this.element.removeClass('ui-grid');
       },
  
       // _setOptions is called with a hash of all options that are changing
       // always refresh when changing options
       _setOptions: function(options) {
-        // _super and _superApply handle keeping the right this-context
-        //this._superApply( arguments );
-        /*for(var opt in options)
+        
+        for(var opt in options)
         {
-          this._setOption(opt, options[opt]);
-        }*/
-        //this._refresh();
+          if(opt != 'data')
+          {
+            this._setOption(opt, options[opt]);
+          }
+          if(opt == 'maxItemsPerPage')
+          {            
+            this._refreshPages();
+          }
+        }
+
+        this._refresh();
       },
  
       // _setOption is called for each individual option that is changing
-      _setOption: function( key, value ) {
+      _setOption: function(key, value) {
         //this._super( key, value ); 
-        this.options[ key ] = value;
+        this.options[key] = value;
         this._refresh();
       },
 
       getData: function ()
       {
-          return this.options.data;
+        return this.options.data;
       },
 
       setData: function (data)
       {
          this.options.data = data;
-         console.log(this.options.data);
          this._refreshData();
       },
 
@@ -497,13 +524,13 @@
         var curr = this;
         var numVisibleItems = 0;
 
-        var id_column_name = null;
+        var id_column_names = [];
 
         for(var i in itemsObject['schema'])
         {
           if(itemsObject['schema'][i]['id'])
           {
-            id_column_name = itemsObject['schema'][i]['name'];
+            id_column_names.push(itemsObject['schema'][i]['name']);
             break;
           } 
         }
@@ -595,15 +622,20 @@
         for(var row in itemsObject['records'])
         {
             
-            var rowIdVal = ""; 
+            var rowIdVal = [];
+            var rowIdString = ""; 
 
-            if(id_column_name !== null)
+            if(id_column_names.length > 0)
             {
-                rowIdVal = itemsObject['records'][row][id_column_name]
+              for(var name in id_column_names)
+              {
+                rowIdVal.push(itemsObject['records'][row][id_column_names[name]]);
+              }
+
+              rowIdString = JSON.stringify(rowIdVal);
             }
 
-            gridhtml += '<tr class = "ui-grid-record_row" data-row-id = "' + row + '" data-id-col-val = "'+ rowIdVal +'">';
-
+            gridhtml += "<tr class = 'ui-grid-record_row' data-row-id = '" + row + "' data-id-col-val = '"+ rowIdString + "'>";
           
             for(var j in itemsObject['schema'])
             {
@@ -687,6 +719,7 @@
           gridhtml += '</select>';
           gridhtml += '</span>';
           gridhtml += '<span id = "' + curr.element.attr('id') + '_next_page" class = "grid-ui-icon-right-arrows"></span>';
+          gridhtml += '<input type = "text" class = "maxItemsPerPage" placeholder = "Items per page" value = "">';
 
           if(curr.options.refresh !== null)
           {
@@ -777,10 +810,18 @@
       },
 
       _unique: function (list) {
+
         var result = [];
+
         $.each(list, function(i, element) {
-          if ($.inArray(element, result) == -1) result.push(element);
+          
+          if($.inArray(element, result) == -1)
+          {
+            result.push(element);
+          }
+
         });
+
         return result;
       },
 
