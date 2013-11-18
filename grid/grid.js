@@ -719,7 +719,6 @@
           gridhtml += '</select>';
           gridhtml += '</span>';
           gridhtml += '<span id = "' + curr.element.attr('id') + '_next_page" class = "grid-ui-icon-right-arrows"></span>';
-          gridhtml += '<input type = "text" class = "maxItemsPerPage" placeholder = "Items per page" value = "">';
 
           if(curr.options.refresh !== null)
           {
@@ -728,6 +727,7 @@
             gridhtml += '<img id = "' + curr.element.attr('id') + '_spinner" src = "'+ img_source +'" width = "20" height = "20" style = "display:none;" />';
           }
 
+          gridhtml += '<input type = "text" class = "maxItemsPerPage" placeholder = "Items per page" value = "">';
           gridhtml += '</span>';
           gridhtml += '<span id = "' + curr.element.attr('id') + '_page_description" style = "float: right;">';        
           gridhtml += '</span>';
@@ -841,5 +841,41 @@
       _isNullOrEmpty: function(val)
       {
           return (val === undefined || val === null || val.length == 0);
+      },
+
+      refreshGrid: function()
+      {
+
+        var curr = this;
+         //refresh set up: the return data 
+        if(curr.options.refresh !== null)
+        {      
+          var current = '#' + curr.element.attr('id') + '_refresh';
+
+          $(current).hide();
+            
+          $('#' + curr.element.attr('id') + '_spinner').show();
+
+          $.ajax({
+            type: curr.options.refresh['type'],
+            url: curr.options.refresh['url'],
+            data: curr.options.refresh['data'],
+            dataType: "json",
+            success: function(data) {
+
+              curr.options.data['records'] = data;
+              curr._refreshData();
+              $(current).show();
+              $('#' + curr.element.attr('id') + '_spinner').hide();    
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+              
+              $(current).show();
+              $('#' + curr.element.attr('id') + '_spinner').hide();
+              alert(xhr.responseText);
+            }
+          });        
+        }
       },         
     });
