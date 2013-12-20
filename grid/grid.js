@@ -144,7 +144,7 @@
           //end filterable settings
 
           //actions is only for checkbox/radio button fields
-          if($.isPlainObject(cdata['schema'][i]['actions']) && !$.isEmptyObject(cdata['schema'][i]['actions']))
+          if($.isArray(cdata['schema'][i]['actions']) && cdata['schema'][i]['actions'].length != 0)
           {
             $('#' + curr.element.attr('id') + '_' + cdata['schema'][i]['name'] + '_action_dropdown').change({field_index: i},function (e){
 
@@ -176,7 +176,7 @@
 
                 }
         
-                actionFunc(checkedItems, currActionKey);
+                actionFunc(checkedItems, currActionKey, currObj.find('option:selected').text());
               }
 
               //reset the option dropdown after 3 seconds
@@ -550,7 +550,7 @@
             continue;
           }
 
-          if(itemsObject['schema'][i]['filterable'] || ($.isPlainObject(itemsObject['schema'][i]['actions']) && !$.isEmptyObject(itemsObject['schema'][i]['actions'])))
+          if(itemsObject['schema'][i]['filterable'] || ($.isArray(itemsObject['schema'][i]['actions']) && itemsObject['schema'][i]['actions'].length != 0))
           {
             gridhtml += '<th>' + global_control + itemsObject['schema'][i]['label'] + ' <span data-col-name = "'+ itemsObject['schema'][i]['name'] +'" class = "'+ curr.element.attr('id') + '_setting_column grid-ui-icon-setting"></span>';
           }
@@ -585,7 +585,7 @@
 
           } 
 
-          if($.isPlainObject(itemsObject['schema'][i]['actions']) && !$.isEmptyObject(itemsObject['schema'][i]['actions']))
+          if($.isArray(itemsObject['schema'][i]['actions']) && itemsObject['schema'][i]['actions'].length != 0)
           {
             //actions can be apply to checkboxes and radio button
             var actions = '<span class = "ui-grid-setting-dropdown">';
@@ -599,10 +599,12 @@
             {
               actions += '<option value = "">select an action</option>';
             }
+
+            var sortedKey = [];
             
-            for(var action in itemsObject['schema'][i]['actions'])
+            for(var index in itemsObject['schema'][i]['actions'])
             {
-              actions += '<option value = "'+ action +'">' + itemsObject['schema'][i]['actions'][action]['label'] +'</option>';
+              actions += '<option value = "'+ index +'">' + itemsObject['schema'][i]['actions'][index]['label'] +'</option>';            
             }
 
             actions += '</select></span>';
